@@ -1,0 +1,1239 @@
+ ASSIGNMENT NO : 2 (A)
+Name : Ronak Sanjay Rahane Roll No : 26
+Batch : TE - B2
+PROBLEM STATEMENT :
+SQL Queries: a. Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as Table, View, Index, Sequence, Synonym, different constraints etc. b. Write at least 10 SQL queries on the suitable database application using SQL DML statements. c. Note: Instructor will design the queries which demonstrate the use of concepts like Insert, Select, Update, Delete with operators, functions, and set operator etc.
+Create following table
+Table Name : Customer
+Table Column Name : Account_no, Name, Balance,City
+Insert Following Record 1 Ram 10000 Pune
+2 Ravi 25000 Nasik
+3 Sachin 30000 Mumbai
+Set Operation : Union, Intersect,Minus
+Create following table
+Table Name : Loan
+Table Column Name : Loan_no, Name, Loan_Amount
+Insert Following Record 1 Ram 10000
+2 Ravi 50000
+4 Dipak 40000
+1) Select customer having account in the bank or taken the loan from the bank 2) Select customer having account as well as loan in the bank
+3) Select customer having account in the bank but not taken the loan
+
+ Output :
+gescoe@gescoe-OptiPlex-3010:~$ mysql -h 192.168.2.232 -u TEB26 -p
+Enter password:
+Welcome to the MySQL monitor. Commands end with ; or \g.Your MySQL connection id is 62 Server version: 5.6.41 MySQL Community Server (GPL)
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+mysql> create database Dbms_26;
+Query OK, 1 row affected (0.00 sec)
+mysql> use Dbms_26;
+Database changed
+mysql> create table customer(accno int primary key,name varchar(15),balance numeric(10),city varchar(15));
+Query OK, 0 rows affected (0.33 sec)
+mysql> desc customer;
++---------+---------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++---------+---------------+------+-----+---------+-------+
+| accno | int(11) | NO | PRI | NULL | |
+| name | varchar(15) | YES | | NULL | |
+| balance | decimal(10,0) | YES | | NULL | |
+| city | varchar(15) | YES | | NULL | |
++---------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+mysql> insert into customer values(1,'Ram',10000,'Pune'),(2,'Ravi',25000,'Nashik'),(3,'Sachin',30000,'Mumbai');Query OK, 3 rows affected (0.06 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select * from customer;
++-------+--------+---------+--------+
+| accno | name | balance | city |
++-------+--------+---------+--------+
+| 1 | Ram | 10000 | Pune |
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++-------+--------+---------+--------+
+3 rows in set (0.00 sec)
+mysql> create table loan(loanno int primary key,name varchar(15),loanamt numeric(10));
+Query OK, 0 rows affected (0.29 sec)
+mysql> desc loan;
+
+ +---------+---------------+------+-----+---------+-------+ | Field | Type | Null | Key | Default | Extra | +---------+---------------+------+-----+---------+-------+ | loanno | int(11) | NO | PRI | NULL | |
+| name | varchar(15) | YES | | NULL | |
+| loanamt | decimal(10,0) | YES | | NULL | | +---------+---------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> insert into loan values(1,'Ram',10000),(2,'Ravi',50000),(4,'dipak',40000); Query OK, 3 rows affected (0.05 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select * from loan;
++--------+-------+---------+
+| loanno | name | loanamt |
++--------+-------+---------+
+| 1 | Ram | 10000 |
+| 2 | Ravi | 50000 |
+| 4 | dipak | 40000 |
++--------+-------+---------+
+3 rows in set (0.00 sec)
+mysql> (select name from customer) union (select name from loan); --having account and loan
++--------+
+| name |
++--------+
+| Ram |
+| Ravi || Sachin |
+| dipak |
++--------+
+4 rows in set (0.00 sec)
+mysql> select name from customer where name in(select name from loan); +------+
+| name |
++------+
+| Ram |
+| Ravi |
++------+
+2 rows in set (0.00 sec)
+mysql> select name from customer where name not in(select name from loan); +--------+
+| name |
++--------+
+| Sachin |
++--------+
+
+ 1 row in set (0.00 sec)
+mysql> select name from loan where name not in(select name from customer);
++-------+
+| name |
++-------+
+| dipak |
++-------+
+1 row in set (0.00 sec)
+mysql> select * from customer where balance>20000;
++-------+--------+---------+--------+
+| accno | name | balance | city |
++-------+--------+---------+--------+
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++-------+--------+---------+--------+
+2 rows in set (0.00 sec)
+mysql> select * from customer where balance>20000 and city='Nashik'; +-------+------+---------+--------+
+| accno | name | balance | city |
++-------+------+---------+--------+
+| 2 | Ravi | 25000 | Nashik |
++-------+------+---------+--------+
+1 row in set (0.00 sec)
+mysql> create index myindex on customer(name);
+Query OK, 0 rows affected (0.27 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> show indexes from customer; +----------+------------+----------+--------------+-------------+-----------+-------------+----------+-------- +------+------------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | +----------+------------+----------+--------------+-------------+-----------+-------------+----------+-------- +------+------------+---------+---------------+
+| customer | 0 | PRIMARY | 1 | accno | A | 3 | NULL | NULL | | BTREE | | |
+| customer | 1 | myindex | 1 | name | A | 3 | NULL | NULL | YES | BTREE | | | +----------+------------+----------+--------------+-------------+-----------+-------------+----------+-------- +------+------------+---------+---------------+
+2 rows in set (0.00 sec)
+mysql> create index dataindex on customer(accno,name);
+Query OK, 0 rows affected (0.28 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> show indexes from customer; +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+------- -+------+------------+---------+---------------+
+
+ | Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+------- -+------+------------+---------+---------------+
+| customer | 0 | PRIMARY | 1 | accno | A | 3 | NULL |
+NULL | | BTREE | | || customer | 1 | myindex | 1 | name | A | 3 | NULL |
+NULL | YES | BTREE | | | | customer | 1 | dataindex | 1 | accno | A | 3 | NULL |
+NULL | | BTREE | | | | customer | 1 | dataindex | 2 | name | A | 3 | NULL |
+NULL | YES | BTREE | | | +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+------- -+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+mysql> select * from customer order by balance asc;
++-------+--------+---------+--------+
+| accno | name | balance | city |
++-------+--------+---------+--------+
+| 1 | Ram | 10000 | Pune |
+| 2 | Ravi | 25000 | Nashik |
+| 3 | Sachin | 30000 | Mumbai |
++-------+--------+---------+--------+
+3 rows in set (0.00 sec)
+mysql> select * from loan order by loanamt desc;
++--------+-------+---------+
+| loanno | name | loanamt |
++--------+-------+---------+
+| 2 | Ravi | 50000 |
+| 4 | dipak | 40000 |
+| 1 | Ram | 10000 |
++--------+-------+---------+
+3 rows in set (0.00 sec)
+mysql> select accno,name,balance,balance*0.04*20 as interest from customer; +-------+--------+---------+----------+
+| accno | name | balance | interest |
++-------+--------+---------+----------+
+| 1 | Ram | 10000 | 8000.00 |
+| 2 | Ravi | 25000 | 20000.00 |
+| 3 | Sachin | 30000 | 24000.00 |
++-------+--------+---------+----------+
+3 rows in set (0.00 sec)
+mysql>
+                                    ************
+
+
+
+
+
+ ASSIGNMENT NO : 3 (A)
+Name : Ronak Sanjay Rahane Roll No : 26
+Batch : TE - B2
+PROBLEM STATEMENT :
+Create following table
+Table Name : Student_Mark
+Table Column Name : Rollno, Name, Marks, Branch Apply primary key constraint
+Insert four records
+1 Ravi 90 Computer
+2 Vedika 70 Computer 3 Aarush 95 IT
+4 Jyoti 60 IT
+Display Student Having marks above 70
+Display Student Having marks Below70
+Display Student Having marks equal to 70 and name is Vedika
+Change Student Name Ravi to Sachin
+Delete Student whose name is Aarush
+Write a Function to display student having max mark.
+Display Minimum, Maximum, Average, Sum, Total count of each branch
+Output :
+gescoe@gescoe-OptiPlex-3010:~$ mysql -h 192.168.2.232 -u TEB26 -p Enter password:
+Welcome to the MySQL monitor. Commands end with ; or \g.
+Your MySQL connection id is 29
+mysql> create database Dbms_26; Query OK, 1 row affected (0.00 sec) mysql> use Dbms_26;
+Database changed
+mysql> create table student_mark(rollno numeric,name varchar(10),marks numeric,branch varchar(10));
+Query OK, 0 rows affected (0.30 sec)
+mysql> insert into student_mark values(1,'ravi',90,'computer'),(2,'vedika',70,'computer'),(3,'aarush',95,'it'),(4,'jyoti',60,'IT');
+
+ Query OK, 4 rows affected (0.04 sec) Records: 4 Duplicates: 0 Warnings: 0 mysql> select * from student_mark;
++--------+--------+-------+----------+ | rollno | name | marks | branch | +--------+--------+-------+----------+ | 1 | ravi | 90 | computer |
+| 2 | vedika | 70 | computer |
+| 3 | aarush | 95 | it |
+| 4 | jyoti | 60 | IT | +--------+--------+-------+----------+ 4 rows in set (0.01 sec)
+mysql> select * from student_mark where marks>70; +--------+--------+-------+----------+
+| rollno | name | marks | branch | +--------+--------+-------+----------+
+| 1 | ravi | 90 | computer |
+| 3 | aarush | 95 | it |
++--------+--------+-------+----------+
+2 rows in set (0.00 sec)
+mysql> select * from student_mark where marks<70; +--------+-------+-------+--------+
+| rollno | name | marks | branch |
++--------+-------+-------+--------+
+| 4 | jyoti | 60 | IT |
++--------+-------+-------+--------+
+1 row in set (0.00 sec)
+mysql> update student_mark set name='sachin' where name='ravi'; Query OK, 1 row affected (0.06 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> delete from student_mark where name='aarush';
+Query OK, 1 row affected (0.06 sec)
+mysql> select * from student_mark; +--------+--------+-------+----------+
+| rollno | name | marks | branch |
++--------+--------+-------+----------+
+| 1 | sachin | 90 | computer |
+| 2 | vedika | 70 | computer |
+| 4 | jyoti | 60 | IT |
++--------+--------+-------+----------+
+3 rows in set (0.00 sec)mysql> select max(marks) from student_mark;
+
+ +------------+
+| max(marks) |
++------------+
+| 90 |
++------------+
+1 row in set (0.00 sec)
+mysql> select max(marks) from student_mark where branch='computer';
++------------+
+| max(marks) |
++------------+
+| 90 |
++------------+
+1 row in set (0.00 sec)
+mysql> select max(marks) from student_mark where branch='IT';
++------------+
+| max(marks) |
++------------+
+| 60 |
++------------+
+1 row in set (0.00 sec)
+mysql> select min(marks) from student_mark where branch='IT';
++------------+
+| min(marks) |
++------------+
+| 60 |
++------------+
+1 row in set (0.00 sec)
+mysql> select min(marks) from student_mark where branch='computer';
++------------+
+| min(marks) |
++------------+
+| 70 |
++------------+
+1 row in set (0.00 sec)mysql> select avg(marks) from student_mark where branch='computer'; +------------+
+| avg(marks) |
++------------+
+| 80.0000 |
++------------+
+1 row in set (0.00 sec)
+mysql> select avg(marks) from student_mark where branch='IT';
++------------+
+| avg(marks) |
++------------+
+
+ | 60.0000 |
++------------+
+1 row in set (0.00 sec)
+mysql> select sum(marks) from student_mark where branch='computer'; +------------+
+| sum(marks) |
++------------+
+| 160 |
++------------+
+1 row in set (0.00 sec)
+mysql> select count(marks) from student_mark where branch='computer'; +--------------+
+| count(marks) |
++--------------+
+|2|
++--------------+
+1 row in set (0.00 sec)
+mysql> select count(marks) from student_mark where branch='IT'; +--------------+
+| count(marks) |
++--------------+
+|1|
++--------------+
+mysql>
+                            ************
+
+
+
+                            
+
+ ASSIGNMENT NO : 4 (A)
+Name : Ronak Sanjay Rahane Roll No : 26
+Batch : TE - B2
+PROBLEM STATEMENT :
+Unnamed PL/SQLcode block: Use of Control structure and Exception handling is After submitting the book, status will change from I to R.
+• If the condition of fine is true, then details will be stored into fine table.
+• Also handles the exception by named exception handler or user define exception handler.
+mandatory.
+Suggested Problem statement: Consider Tables:
+1. Borrower(Roll_no, Name, Date of Issue, Name of Book, Status) 2. Fine(Roll_no, Date, Amt)
+• Accept Roll_no and Name of Book from user.
+• Check the number of days (from date of issue).
+• If days are between 15 to 30 then the fine amount will be Rs 5 per day.
+• If no. of days>30, per day fine will be Rs 50 per day and for days less than 30, Rs. 5 per day.
+Output :
+mysql -h 192.168.2.232 -u TEB23 -p Enter password:
+Welcome to the MySQL monitor. Commands end with ; or \g. Your MySQL connection id is 26
+Server version: 5.6.41 MySQL Community Server (GPL) Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates. Other names may be trademarks of their respective owners.
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+mysql> create database pr04; Query OK, 1 row affected (0.00 sec)
+
+ mysql> use pr04;
+Database changed
+mysql> create table Fine(Roll_no int,sDate date,Amt int);
+Query OK, 0 rows affected (0.30 sec)
+mysql> create table Borrower(Roll_no int primary key,name varchar(20),DateofIssue date,book varchar(20),status char);
+Query OK, 0 rows affected (0.29 sec)
+mysql> insert into Borrower values(1,'Rahul','2024-07-14','DBMS','I'); Query OK, 1 row affected (0.05 sec)
+mysql> insert into Borrower values(2,'Ravi','2024-06-14','SPOS','I'); Query OK, 1 row affected (0.05 sec)
+mysql> insert into Borrower values(3,'RAM','2024-07-25','CNS','I'); Query OK, 1 row affected (0.04 sec)
+mysql> SELECT * FROM Borrower; +---------+-------+-------------+------+--------+
+| Roll_no | name | DateofIssue | book | status | +---------+-------+-------------+------+--------+
+| 1|Rahul|2024-07-14 |DBMS|I
+| 2|Ravi |2024-06-14 |SPOS|I
+| 3|RAM |2024-07-25 |CNS |I +---------+-------+-------------+------+--------+ 3 rows in set (0.00 sec)
+mysql> SELECT * FROM Fine;
+Empty set (0.01 sec)
+mysql> drop procedure if exists p_fine;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+mysql> mysql> mysql> mysql> ->
+-> -> -> -> -> -> ->
+delimiter //
+create procedure p_fine(IN rno int,IN bname varchar(20)) begin
+declare d1 date; declare daycnt int; declare fine_amt int;
+SELECT DateofIssue into d1 FROM Borrower
+| |
+|
+
+ -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> ->
+WHERE Roll_no = rno and book= bname;
+select DATEDIFF(now(),d1) into daycnt; if(daycnt >= 15 and daycnt <= 30) then
+set fine_amt := daycnt * 5;
+insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt); update Borrower set status = 'R' where Roll_no = rno;
+ELSEIF(daycnt > 30) then
+set fine_amt := daycnt * 50;
+insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt);
+update Borrower set status = 'R' where Roll_no = rno; else
+end if;
+end; //
+Query OK, 0 rows affected (0.00 sec) mysql>
+mysql> delimiter ;
+mysql> call p_fine(1,'DBMS');
+Query OK, 1 row affected (0.10 sec)
+mysql> select * from Fine; +---------+------------+------+
+| Roll_no | sDate | Amt | +---------+------------+------+
+| 1 | 2024-07-30 | 80 | +---------+------------+------+ 1 row in set (0.00 sec)
+mysql> select * from Borrower; +---------+-------+-------------+------+--------+
+update Borrower set status = 'R' where Roll_no = rno;
+
+ | Roll_no | name | DateofIssue | book | status | +---------+-------+-------------+------+--------+
+| 1|Rahul|2024-07-14 |DBMS|R
+| 2|Ravi |2024-06-14 |SPOS|I
+| 3|RAM |2024-07-25 |CNS |I +---------+-------+-------------+------+--------+ 3 rows in set (0.00 sec)
+mysql> call p_fine(2,'SPOS');
+Query OK, 1 row affected (0.12 sec)
+| |
+|
+mysql> select * from Borrower; +---------+-------+-------------+------+--------+
+| Roll_no | name | DateofIssue | book | status | +---------+-------+-------------+------+--------+
+| 1|Rahul|2024-07-14 |DBMS|R
+| 2|Ravi |2024-06-14 |SPOS|R
+| 3|RAM |2024-07-25 |CNS |I +---------+-------+-------------+------+--------+ 3 rows in set (0.00 sec)
+mysql> select * from Fine; +---------+------------+------+
+| Roll_no | sDate | Amt | +---------+------------+------+
+| 1 | 2024-07-30 | 80 |
+| 2 | 2024-07-30 | 2300 | +---------+------------+------+
+2 rows in set (0.00 sec)
+mysql> call p_fine(3,'CNS');
+Query OK, 1 row affected (0.05 sec)
+mysql> select * from Borrower; +---------+-------+-------------+------+--------+
+| Roll_no | name | DateofIssue | book | status | +---------+-------+-------------+------+--------+
+| 1|Rahul|2024-07-14 |DBMS|R
+| 2|Ravi |2024-06-14 |SPOS|R
+| 3|RAM |2024-07-25 |CNS |R +---------+-------+-------------+------+--------+ 3 rows in set (0.00 sec)
+mysql> select * from Fine; +---------+------------+------+
+| Roll_no | sDate | Amt | +---------+------------+------+
+| 1 | 2024-07-30 | 80 |
+| 2 | 2024-07-30 | 2300 | +---------+------------+------+
+2 rows in set (0.00 sec) mysql>
+| |
+|
+| |
+|
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+Last login: Sun Nov  3 17:27:51 on console
+ronakrahane@Ronaks-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 9.0.1 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| demo_db            |
+| hotel_booking      |
+| information_schema |
+| javacrud           |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+7 rows in set (0.02 sec)
+
+5 ----------------------------------------------------------------
+
+mysql> use demo_db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE table Circle_area(radius int,area float);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc Circle_area;
++--------+-------+------+-----+---------+-------+
+| Field  | Type  | Null | Key | Default | Extra |
++--------+-------+------+-----+---------+-------+
+| radius | int   | YES  |     | NULL    |       |
+| area   | float | YES  |     | NULL    |       |
++--------+-------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+
+mysql> 
+mysql> drop procedure if exists Find_Circle_Area;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> 
+mysql> delimiter //
+mysql>  
+    -> create procedure Find_Circle_Area()
+    -> BEGIN
+    -> declare r int;
+    -> declare a float;
+    -> 
+    -> set r = 5;
+    ->     loop_label:  LOOP
+    ->         IF  r > 9 THEN
+    ->             LEAVE  loop_label;
+    ->         END  IF;
+    ->            
+    ->         set a = 3.14 * r * r;
+    ->            insert into Circle_area(radius,area) values(r,a);
+    ->            
+    ->            set r = r + 1;
+    ->        
+    ->     END LOOP;
+    -> 
+    -> END;
+    ->  
+    ->  //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call Find_Circle_Area;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Select from * Circle_area;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from * Circle_area' at line 1
+mysql> Select * from Circle_area;
++--------+--------+
+| radius | area   |
++--------+--------+
+|      5 |   78.5 |
+|      6 | 113.04 |
+|      7 | 153.86 |
+|      8 | 200.96 |
+|      9 | 254.34 |
++--------+--------+
+5 rows in set (0.00 sec)
+
+
+
+6 ----------------------------------------------------------------
+
+
+
+mysql> CREATE table Fine(roll_no int,sdate date,amount int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE table Borrower(roll_no int,name varchar(20) ,DOI date,book varchar(15),status char);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> INSERT INTO Borrower(1,'Ram','2024-07-14','DBMS','I'),(2,'Ravi','2024-06-14','SPOS','I'),(3,'Rahul','2024-07-25','CNS','I');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1,'Ram','2024-07-14','DBMS','I'),(2,'Ravi','2024-06-14','SPOS','I'),(3,'Rahul','' at line 1
+mysql> INSERT INTO Borrower(1,'Ram','2024-07-14','DBMS','I'),(2,'Ravi','2024-06-14','SPOS','I'),(3,'Rahul','2024-07-25','CNS','I');mysql> 
+mysql> INSERT INTO Borrower(1,'Ram','2024-07-14','DBMS','I');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1,'Ram','2024-07-14','DBMS','I')' at line 1
+mysql> INSERT INTO Borrower values(1,'Ram','2024-07-14','DBMS','I'),(2,'Ravi','2024-06-14','SPOS','I'),(3,'Rahul','2024-07-25','CNS','I');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from Fine;
+Empty set (0.01 sec)
+
+mysql> drop procedure if exists p_fine;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> 
+mysql>     delimiter //
+mysql> 
+mysql>     create procedure p_fine(IN rno int,IN  bname varchar(20))
+    ->     begin
+    -> 
+    ->        declare d1 date;    
+    ->        declare daycnt int;
+    ->        declare fine_amt int;
+    -> 
+    ->    
+    ->       SELECT DateofIssue into d1 FROM Borrower
+    ->       WHERE Roll_no = rno and book= bname;
+    ->      
+    ->        select DATEDIFF(now(),d1) into daycnt;
+    ->        
+    ->          if(daycnt >= 15 and daycnt <= 30) then
+    ->          
+    ->                set fine_amt := daycnt * 5;
+    ->            
+    ->                  insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->        ELSEIF(daycnt > 30) then
+    ->        
+    ->                 set fine_amt := daycnt * 50;
+    ->            
+    ->                  insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->          else
+    ->          
+    ->                           update Borrower set status = 'R' where Roll_no = rno;
+    ->                
+    ->          end if;    
+    -> 
+    ->      end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call p_fine(1,'DBMS');
+ERROR 1054 (42S22): Unknown column 'DateofIssue' in 'field list'
+mysql> drop procedure if exists p_fine;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql>     delimiter //
+mysql> 
+mysql>     create procedure p_fine(IN rno int,IN  bname varchar(20))
+    ->     begin
+    -> 
+    ->        declare d1 date;    
+    ->        declare daycnt int;
+    ->        declare fine_amt int;
+    -> 
+    ->    
+    ->       SELECT DOI into d1 FROM Borrower
+    ->       WHERE Roll_no = rno and book= bname;
+    ->      
+    ->        select DATEDIFF(now(),d1) into daycnt;
+    ->        
+    ->          if(daycnt >= 15 and daycnt <= 30) then
+    ->          
+    ->                set fine_amt := daycnt * 5;
+    ->            
+    ->                  insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->        ELSEIF(daycnt > 30) then
+    ->        
+    ->                 set fine_amt := daycnt * 50;
+    ->            
+    ->                  insert into Fine(Roll_no,sDate,Amt) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->          else
+    ->          
+    ->                           update Borrower set status = 'R' where Roll_no = rno;
+    ->                
+    ->          end if;    
+    -> 
+    ->      end;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call p_fine(1,'DBMS');
+ERROR 1054 (42S22): Unknown column 'Amt' in 'field list'
+mysql> drop procedure if exists p_fine;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql>     delimiter //
+mysql> 
+mysql>     create procedure p_fine(IN rno int,IN  bname varchar(20))
+    ->     begin
+    -> 
+    ->        declare d1 date;    
+    ->        declare daycnt int;
+    ->        declare fine_amt int;
+    -> 
+    ->    
+    ->       SELECT DOI into d1 FROM Borrower
+    ->       WHERE Roll_no = rno and book= bname;
+    ->      
+    ->        select DATEDIFF(now(),d1) into daycnt;
+    ->        
+    ->          if(daycnt >= 15 and daycnt <= 30) then
+    ->          
+    ->                set fine_amt := daycnt * 5;
+    ->            
+    ->                  insert into Fine(roll_no,sdate,amount) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->        ELSEIF(daycnt > 30) then
+    ->        
+    ->                 set fine_amt := daycnt * 50;
+    ->            
+    ->                  insert into Fine(roll_no,sdate,amount) values (rno,now(),fine_amt);
+    ->                                                    
+    ->                  update Borrower set status = 'R' where Roll_no = rno;
+    ->                  
+    ->          else
+    ->          
+    ->                           update Borrower set status = 'R' where Roll_no = rno;
+    ->                
+    ->          end if;    
+    -> 
+    ->      end;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call p_fine(1,'DBMS');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Fine;
++---------+------------+--------+
+| roll_no | sdate      | amount |
++---------+------------+--------+
+|       1 | 2024-11-08 |   5850 |
++---------+------------+--------+
+1 row in set (0.00 sec)
+
+mysql> call p_fine(2,'SPOS');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Fine;
++---------+------------+--------+
+| roll_no | sdate      | amount |
++---------+------------+--------+
+|       1 | 2024-11-08 |   5850 |
+|       2 | 2024-11-08 |   7350 |
++---------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> call p_fine(3,'CNS');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Fine;
++---------+------------+--------+
+| roll_no | sdate      | amount |
++---------+------------+--------+
+|       1 | 2024-11-08 |   5850 |
+|       2 | 2024-11-08 |   7350 |
+|       3 | 2024-11-08 |   5300 |
++---------+------------+--------+
+3 rows in set (0.01 sec)
+
+mysql> select * from Borrower;
++---------+-------+------------+------+--------+
+| roll_no | name  | DOI        | book | status |
++---------+-------+------------+------+--------+
+|       1 | Ram   | 2024-07-14 | DBMS | R      |
+|       2 | Ravi  | 2024-06-14 | SPOS | R      |
+|       3 | Rahul | 2024-07-25 | CNS  | R      |
++---------+-------+------------+------+--------+
+3 rows in set (0.00 sec)
+
+
+
+6 ----------------------------------------------------------------
+
+
+
+mysql> CREATE table stud_marks(rollno int,name varchar(20),marks int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO stud_marks values(1,'Ronak',1400),(2,'Yash',900),(3,'Mohit',1500),(4,'Nalin',600);
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * from stud_marks;
++--------+-------+-------+
+| rollno | name  | marks |
++--------+-------+-------+
+|      1 | Ronak |  1400 |
+|      2 | Yash  |   900 |
+|      3 | Mohit |  1500 |
+|      4 | Nalin |   600 |
++--------+-------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE table Result(rollno int,name varchar(20),class varchar(20));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> drop procedure if exists proc_Grade;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> 
+mysql>     delimiter //
+mysql> 
+mysql>     create procedure proc_Grade()
+    ->     begin
+    ->         DECLARE done INT default  0;
+    -> 
+    ->         declare s_marks int;
+    ->         declare s_rollno int;
+    ->         declare s_name varchar(30);
+    ->         declare s_class varchar(30);
+    -> 
+    ->         declare s_student cursor For Select  rollno, name, marks from stud_marks;
+    -> 
+    -> 
+    ->     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    -> 
+    -> 
+    ->          open s_student;
+    ->    
+    ->      read_loop: LOOP
+    ->               fetch s_student  into s_rollno,s_name,s_marks;
+    -> 
+    ->     IF done = 1 THEN
+    ->           LEAVE read_loop;
+    ->     END IF;
+    -> 
+    ->          if(s_marks<=1500 and s_marks>=990) then
+    ->              set s_class='Distinction';
+    -> 
+    ->         elseif(s_marks<=989 and s_marks>=900) then
+    ->              set s_class='First Class';
+    ->        
+    ->         elseif (s_marks<=899 and s_marks>=825) then
+    ->             set s_class='Higher Second Class';
+    -> 
+    ->     else
+    ->      set s_class='Pass';
+    -> 
+    ->     end if;
+    ->      insert into Result(rollno,name,class)values(s_rollno,s_name,s_class);
+    -> 
+    ->   END LOOP;
+    ->          close s_student;
+    ->          end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call proc_Grade();
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * from Result;
++--------+-------+-------------+
+| rollno | name  | class       |
++--------+-------+-------------+
+|      1 | Ronak | Distinction |
+|      2 | Yash  | First Class |
+|      3 | Mohit | Distinction |
+|      4 | Nalin | Pass        |
++--------+-------+-------------+
+4 rows in set (0.00 sec)
+
+
+
+7 ----------------------------------------------------------------
+
+
+mysql> CREATE table N_RollCall(rollno int,name varchar(20));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE table O_RollCall(rollno int,name varchar(20));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO N_RollCall values(1,'ronak'),(2,'maya'),(3,'Mohit');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO O_RollCall values(1,'ronak'),(2,'maya'),(4,'Nalin');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM N_RollCall;
++--------+-------+
+| rollno | name  |
++--------+-------+
+|      1 | ronak |
+|      2 | maya  |
+|      3 | Mohit |
++--------+-------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM O_RollCall;
++--------+-------+
+| rollno | name  |
++--------+-------+
+|      1 | ronak |
+|      2 | maya  |
+|      4 | Nalin |
++--------+-------+
+3 rows in set (0.00 sec)
+
+mysql> 
+mysql> drop procedure if exists mycursor1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> 
+mysql> delimiter //
+mysql> 
+mysql> CREATE PROCEDURE mycursor1()
+    -> BEGIN
+    ->     DECLARE done INT DEFAULT 0;
+    ->     DECLARE  c_rollno int;
+    ->     DECLARE  c_name char(20);
+    -> 
+    ->     DECLARE  c_studentN CURSOR  for SELECT rollno,name FROM O_RollCall where rollno not in(select rollno from N_RollCall);
+    -> 
+    ->     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    -> 
+    ->     BEGIN
+    ->         OPEN c_studentN;
+    ->            read_loop:LOOP
+    ->                FETCH c_studentN into c_rollno, c_name;  
+    ->    
+    ->                IF done = 1 THEN
+    ->                   LEAVE read_loop;
+    ->                END IF;          
+    ->    
+    ->               insert into N_RollCall(rollno,name) values(c_rollno, c_name);
+    -> 
+    ->            END LOOP;
+    ->            CLOSE c_studentN;
+    ->     END;
+    -> END;
+    -> 
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> call mycursor1();
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM N_RollCall;
++--------+-------+
+| rollno | name  |
++--------+-------+
+|      1 | ronak |
+|      2 | maya  |
+|      3 | Mohit |
+|      4 | Nalin |
++--------+-------+
+4 rows in set (0.00 sec)
+
+
+8 ----------------------------------------------------------------
+
+
+mysql> CREATE table lib_book(bid int,bname varchar(20),qty int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE table lib_Audit(bid int,bname varchar(20),qty int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO lib_book values(1,'DBMS',100),(2,'SPOS',150),(3,'CNS',200);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> drop trigger if exists Make_audit1;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> 
+mysql> delimiter //
+mysql> 
+mysql> CREATE TRIGGER Make_audit1
+    ->   AFTER DELETE ON lib_book
+    ->   FOR EACH ROW
+    -> BEGIN
+    ->   INSERT INTO lib_Audit (bid, bname, qty)
+    ->   VALUES (OLD.bid, OLD.bname,OLD.qty);
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> DELETE FROM lib_book where bname='SPOS';
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from lib_book;
++------+-------+------+
+| bid  | bname | qty  |
++------+-------+------+
+|    1 | DBMS  |  100 |
+|    3 | CNS   |  200 |
++------+-------+------+
+2 rows in set (0.00 sec)
+
+mysql> select * from lib_Audit;
++------+-------+------+
+| bid  | bname | qty  |
++------+-------+------+
+|    2 | SPOS  |  150 |
++------+-------+------+
+1 row in set (0.00 sec)
+
+mysql> drop trigger if exists Make_audit2;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> 
+mysql> delimiter //
+mysql> 
+mysql> CREATE TRIGGER Make_audit2
+    ->   AFTER UPDATE ON lib_book
+    ->   FOR EACH ROW
+    -> BEGIN
+    ->   INSERT INTO lib_Audit (bid, bname, qty)
+    ->   VALUES (OLD.bid, OLD.bname,OLD.qty);
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> delimiter ;
+mysql> UPDATE table lib_book set qty=qty-50;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table lib_book set qty=qty-50' at line 1
+mysql> UPDATE lib_book set qty=qty-50;
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from lib_Audit;
++------+-------+------+
+| bid  | bname | qty  |
++------+-------+------+
+|    2 | SPOS  |  150 |
+|    1 | DBMS  |  100 |
+|    3 | CNS   |  200 |
++------+-------+------+
+3 rows in set (0.00 sec)
+
+mysql> select * from lib_book;
++------+-------+------+
+| bid  | bname | qty  |
++------+-------+------+
+|    1 | DBMS  |   50 |
+|    3 | CNS   |  150 |
++------+-------+------+
+2 rows in set (0.00 sec)
+
+mysql> 
+
+
+No SQL ----------------------------------------------------------------
+
+
+
+ ASSIGNMENT NO : 1 (B)
+Name : Ronak Sanjay Rahane Roll No : 26
+Batch : TE - B2
+PROBLEM STATEMENT :
+MongoDB Queries: Design and Develop MongoDB Queries using
+CRUD operations.(UseCRUDoperations, SAVE method, logical operators etc.).
+Output :
+gescoe@gescoe-OptiPlex-3010:~$ mongo MongoDB shell version: 2.6.12
+connecting to: test
+> use TEB_26;
+switched to db TEB_26
+> db.createCollection("Student");
+{ "ok" : 1}
+> db.Student.insert({"Rollno":1,"Name":"Raj","Branch":"Computer","Marks":95}); WriteResult({ "nInserted" : 1 })
+> db.Student.insert({"Rollno":2,"Name":"maya","Branch":"IT","Marks":75}); WriteResult({ "nInserted" : 1 })
+> db.Student.insert({"Rollno":3,"Name":"ronak","Branch":"Mechanical","Marks":82}); WriteResult({ "nInserted" : 1 })
+> db.Student.insert({"Rollno":4,"Name":"yash","Branch":"Computer","Marks":60}); WriteResult({ "nInserted" : 1 })
+> db.Student.find().pretty();
+{
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+{
+"_id" : ObjectId("66c5c05af69f7a64bf57360c"),
+"Rollno" : 2,
+"Name" : "maya",
+"Branch" : "IT",
+"Marks" : 75
+}
+{
+
+ "_id" : ObjectId("66c5c07df69f7a64bf57360d"), "Rollno" : 3,
+"Name" : "ronak",
+"Branch" : "Mechanical",
+"Marks" : 82}
+{
+"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),
+"Rollno" : 4,
+"Name" : "yash",
+"Branch" : "Computer",
+"Marks" : 60
+}
+> db.Student.update({"Name":"yash"},{$set:{"Name":"prajwal"}}); WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty();
+{
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+{
+"_id" : ObjectId("66c5c05af69f7a64bf57360c"),
+"Rollno" : 2,
+"Name" : "maya",
+"Branch" : "IT",
+"Marks" : 75
+}
+{
+"_id" : ObjectId("66c5c07df69f7a64bf57360d"),
+"Rollno" : 3,
+"Name" : "ronak",
+"Branch" : "Mechanical",
+"Marks" : 82
+}
+{
+"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),
+"Rollno" : 4,
+"Name" : "prajwal",
+"Branch" : "Computer",
+"Marks" : 60
+}
+> db.Student.remove({"Rollno":3});WriteResult({ "nRemoved" : 1 })
+
+ > db.Student.find().pretty();
+{
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+{
+"_id" : ObjectId("66c5c05af69f7a64bf57360c"),
+"Rollno" : 2,
+"Name" : "maya",
+"Branch" : "IT",
+"Marks" : 75
+}
+{
+"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),
+"Rollno" : 4,
+"Name" : "prajwal",
+"Branch" : "Computer",
+"Marks" : 60
+}
+> db.Student.save({"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),"Branch":"AIDS","Marks":80}); WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty();
+{
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+{
+"_id" : ObjectId("66c5c05af69f7a64bf57360c"),
+"Rollno" : 2,
+"Name" : "maya",
+"Branch" : "IT",
+"Marks" : 75}
+{
+"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),
+"Branch" : "AIDS",
+"Marks" : 80
+}
+
+ > db.Student.find({$and:[{"Branch":"Computer"},{"Marks":95}]}).preety(); {
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+> db.Student.find({$or:[{"Branch":"Computer"},{"Marks":75}]}).preety(); {
+"_id" : ObjectId("66c5c039f69f7a64bf57360b"),
+"Rollno" : 1,
+"Name" : "Raj",
+"Branch" : "Computer",
+"Marks" : 95
+}
+{
+"_id" : ObjectId("66c5c05af69f7a64bf57360c"),
+"Rollno" : 2,
+"Name" : "maya",
+"Branch" : "IT",
+"Marks" : 75
+}
+> db.Student.find({$nor:[{"Branch":"Computer"},{"Marks":75}]}).preety(); {
+"_id" : ObjectId("66c5c0a1f69f7a64bf57360e"),
+"Branch" : "AIDS",
+"Marks" : 80
+}
+**************
+
+
+
+3 NOSQL ----------------------------------------------------------------
+
+ ASSIGNMENT NO : 3 (B)
+Name : Ronak Sanjay Rahane Roll No : 26
+Batch : TE - B2
+PROBLEM STATEMENT :
+MongoDB – Map-reduces operations: Implement Map reduces operation with suitable example using MongoDB.
+Output :
+gescoe@gescoe-OptiPlex-3010:~$ mongo MongoDB shell version: 2.6.12
+connecting to: test
+> use TEB_26;
+switched to db TEB_26
+> db.Record.insert({"Branch":"Computer","Marks":950,"Division":"B"}); WriteResult({ "nInserted" : 1 })
+> db.Record.insert({"Branch":"Computer","Marks":700,"Division":"B"}); WriteResult({ "nInserted" : 1 })
+> db.Record.insert({"Branch":"AIDS","Marks":820,"Division":"A"}); WriteResult({ "nInserted" : 1 })
+> db.Record.insert({"Branch":"AIDS","Marks":650,"Division":"B"}); WriteResult({ "nInserted" : 1 })
+> db.Record.find().pretty();
+{
+"_id" : ObjectId("66f12b91e8870de812a53430"),
+"Branch" : "Computer",
+"Marks" : 950,
+"Division" : "B"
+}
+{
+"_id" : ObjectId("66f12bb4e8870de812a53431"),
+"Branch" : "Computer",
+"Marks" : 700,
+"Division" : "B"
+}
+{
+"_id" : ObjectId("66f12bcce8870de812a53432"),
+"Branch" : "AIDS",
+"Marks" : 820,
+"Division" : "A"
+}
+{
+
+ "_id" : ObjectId("66f12be8e8870de812a53433"), "Branch" : "AIDS",
+"Marks" : 650,
+"Division" : "B"
+}> db.Record.mapReduce(function(){emit(this.Branch, this.Marks);}, ... function(key, values) {return Array.sum( values)},
+... { query : {Division : "B"},
+out : "Total_marks"
+... }
+... );
+{
+"result" : "Total_marks", "timeMillis" : 87, "counts" : {
+"input" : 3, "emit" : 3, "reduce" : 1, "output" : 2 },
+"ok" : 1
+}
+> show collections;
+Record
+Student
+Total_marks
+System.indexes
+> db.Total_marks.find().pretty();
+{ "_id" : "AIDS", "value" : 650 }
+{ "_id" : "Computer", "value" : 1650 } >
+**************
+
