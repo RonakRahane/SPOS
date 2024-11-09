@@ -1,0 +1,5 @@
+db.students.mapReduce(function(){emit(this.Branch, this.Marks);},function(key, values) {return Array.sum( values)},
+{ query : {Division : "B"},
+out : "Total_marks"});
+
+db.students.mapReduce( function(){emit(this.Branch,this.Marks);}, function(key,values){ return Array.avg(values)}, {    query : {"Marks":{$gt:60}},    out : "Avg_Marks" } );
