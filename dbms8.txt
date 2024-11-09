@@ -1,0 +1,40 @@
+Assignment no : 08
+Title : Database Trigger (All Types: Row level and Statement level triggers, Before and After Triggers).
+Write
+a database trigger on Library table. The System should keep track of
+the records that are being updated or deleted. The old value of updated
+or deleted records should be added in Library_Audit table.
+
+PL SQL Code : 
+drop trigger if exists Make_audit1;
+
+delimiter //
+
+CREATE TRIGGER Make_audit1
+  AFTER DELETE ON lib_book
+  FOR EACH ROW
+BEGIN
+  INSERT INTO lib_Audit (bid, bname, qty)
+  VALUES (OLD.bid, OLD.bname,OLD.qty);
+END;
+//
+
+delimiter ;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+drop trigger if exists Make_audit2;
+
+delimiter //
+
+CREATE TRIGGER Make_audit2
+  AFTER UPDATE ON lib_book
+  FOR EACH ROW
+BEGIN
+  INSERT INTO lib_Audit (bid, bname, qty)
+  VALUES (OLD.bid, OLD.bname,OLD.qty);
+END;
+//
+
+delimiter ;
